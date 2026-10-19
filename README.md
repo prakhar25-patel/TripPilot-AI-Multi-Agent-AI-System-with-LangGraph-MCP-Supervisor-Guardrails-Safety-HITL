@@ -1,87 +1,261 @@
-# Multi-Agent-System-using-LangGraph-MCP-Supervisor-Guardrails-HITL
+# ✈️ TripPilot AI — Multi-Agent Travel Planning Platform
 
-A demo multi-agent system that uses LangGraph and MCP to implement a travel-planning assistant with a Supervisor, input Guardrails, and Human-In-The-Loop (HITL) approval flows. The project includes a FastAPI frontend, example MCP server, and client helpers to demonstrate how agents, supervisors, and guardrails can be composed into a safe, reviewable planning pipeline.
+**TripPilot AI** is an AI-powered travel planning platform built with **LangGraph, LangChain, MCP, and LangSmith**. It uses a supervisor-based multi-agent architecture to understand travel requests, delegate tasks to specialized agents, and generate personalized travel plans.
 
-Key ideas:
-- Multi-agent coordination using LangGraph and MCP
-- Supervisor agent to manage complex workflows
-- Input guardrails to validate user requests
-- Human-in-the-loop approval for generated plans
+The platform integrates dedicated agents for travel planning, flights, budget analysis, and weather information, with guardrails for safer request handling and LangSmith for workflow observability.
 
-Contents
-- `app.py`: FastAPI web frontend and API endpoints
-- `backend.py`: core agent orchestration / travel-planner logic
-- `mcp_client.py`: client helpers to interact with the MCP server
-- `custom_weather_mcp_server.py`: example MCP server for weather checks
-- `templates/`, `static/`: frontend UI assets (HTML, JS, CSS)
+## 🚀 Key Features
 
-Features
-- Interactive web UI for sending travel planning prompts
-- Endpoint for drafting travel plans and separate approval endpoint
-- Example MCP server demonstrating domain adapters (weather, checkpoints)
+- **Multi-Agent Architecture:** Specialized agents collaborate to handle different aspects of travel planning.
+- **Supervisor Agent:** Intelligently routes user requests to the appropriate agents using LangGraph.
+- **Guardrails:** Validates user requests and helps enforce application-specific safety rules.
+- **MCP Integration:** Connects agents to external tools and services through the Model Context Protocol.
+- **Flight Assistance:** Supports flight-related queries through the configured flight tools.
+- **Travel Planning:** Helps generate travel recommendations and itinerary information.
+- **Budget Planning:** Supports budget estimation and travel cost analysis.
+- **Weather Assistance:** Retrieves weather information through configured weather tools.
+- **LangSmith Observability:** Enables tracing, debugging, and inspection of agent execution.
+- **Docker Support:** Makes the application easier to package and run consistently across environments.
 
-Prerequisites
-- Python 3.10+ (recommended)
-- Git (to clone the repo)
-- A virtual environment tool (venv) or similar
+## 🏗️ Architecture
 
-Quick start (Windows)
+```mermaid
+flowchart TD
+    A[User Query] --> B[Guardrails Agent]
+    B --> C[Supervisor Agent - LangGraph]
 
-1. Create and activate a virtual environment
+    C --> D[Travel Agent]
+    C --> E[Flight Agent]
+    C --> F[Budget Agent]
+    C --> G[Weather Agent]
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1    # PowerShell
+    D --> H[MCP Tools and Services]
+    E --> H
+    F --> H
+    G --> H
+
+    H --> I[Agent Results]
+    I --> J[Supervisor Coordination]
+    J --> K[Final Travel Plan]
+
+    C -. Tracing .-> L[LangSmith]
+    B -. Validation .-> M[Safety Checks]
 ```
 
-2. Install dependencies
+### How It Works
 
-```powershell
+1. The user submits a travel-related request in natural language.
+2. The guardrails component validates the request according to the application's configured rules.
+3. The Supervisor Agent analyzes the request and determines which specialized agents are needed.
+4. The selected agents perform their assigned tasks and interact with available MCP tools.
+5. Agent outputs are coordinated into a consolidated response.
+6. LangSmith traces help developers inspect execution paths, tool calls, and errors.
+
+## 🧠 Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Core application logic |
+| LangGraph | Stateful agent workflows and orchestration |
+| LangChain | LLM and tool integration |
+| MCP | Standardized tool connectivity |
+| LangSmith | Tracing, observability, and debugging |
+| FastAPI | Backend API |
+| Docker | Containerization |
+| LLM Provider | Natural-language understanding and response generation |
+
+## 🤖 Specialized Agents
+
+### 1. Supervisor Agent
+- Interprets the user's travel requirements.
+- Selects the appropriate agents.
+- Coordinates execution and combines results.
+
+### 2. Travel Agent
+- Handles general travel planning.
+- Supports itinerary and destination-related queries.
+
+### 3. Flight Agent
+- Handles flight-related requests through configured tools.
+- Uses available tool results to support flight planning.
+
+### 4. Budget Agent
+- Assists with estimated travel costs.
+- Helps organize travel options around budget requirements.
+
+### 5. Weather Agent
+- Handles destination weather queries using configured weather tools.
+- Provides relevant weather information for travel planning.
+
+### 6. Guardrails
+- Checks requests against defined application policies.
+- Helps prevent invalid or disallowed requests from proceeding through the workflow.
+
+## 🔌 MCP Integration
+
+TripPilot AI uses the **Model Context Protocol (MCP)** to connect agents with tools through a standardized interface.
+
+MCP can help separate agent reasoning from tool implementation, making the system easier to extend and maintain.
+
+The project supports the configured MCP integrations for travel, flights, budget, and weather.
+
+## 📊 LangSmith Observability
+
+LangSmith is used to inspect and debug the agentic workflow.
+
+Depending on the configured tracing and instrumentation, it can help with:
+
+- Viewing execution traces.
+- Inspecting agent transitions.
+- Debugging tool invocation failures.
+- Analyzing LLM calls and latency.
+- Identifying workflow bottlenecks.
+
+## 🛠️ Installation and Setup
+
+### Prerequisites
+
+- Python 3.10 or a compatible version supported by your dependencies.
+- Git.
+- An LLM provider API key.
+- Docker, if running the containerized application.
+- Credentials for any external APIs your configured tools require.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/TripPilot-AI.git
+cd TripPilot-AI
+```
+
+Replace `YOUR_USERNAME` and the repository name with your actual GitHub details.
+
+### 2. Create a Virtual Environment
+
+**Windows**
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+**Linux / macOS**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+If your repository includes a `requirements.txt` file:
+
+```bash
 pip install -r requirements.txt
 ```
 
-3. Run the FastAPI app (development)
+### 4. Configure Environment Variables
 
-```powershell
-# option A (run module)
-python app.py
+Create a `.env` file in the project root and add the variables required by your implementation.
 
-# option B (uvicorn)
-uvicorn app:app --reload --host 127.0.0.1 --port 8000
+Example:
+
+```env
+GROQ_API_KEY=your_llm_api_key
+
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=your_langsmith_api_key
+LANGSMITH_PROJECT=TripPilot-AI
+
+FLIGHT_API_KEY=your_flight_api_key
+WEATHER_API_KEY=your_weather_api_key
 ```
 
-4. Open the web UI
+Add only the variables your code actually uses. Replace the example names with your implementation's exact environment variable names and configure any additional credentials required by your MCP servers.
 
-Visit http://127.0.0.1:8000 in your browser to use the TripMate frontend.
+**Security:** Never commit `.env` files, API keys, access tokens, or other secrets to GitHub.
 
-Running the MCP server (example)
-- The repository includes `custom_weather_mcp_server.py` as an example MCP server. Run it in a separate terminal if you want to experiment with custom adapters used by the demo.
+### 5. Run the Application
 
-```powershell
-# start example MCP server (if needed)
-python custom_weather_mcp_server.py
+For a FastAPI application, use the entry point defined in your project. For example, if your application object is named `app` in `main.py`:
+
+```bash
+uvicorn main:app --reload
 ```
 
-API Endpoints
-- `POST /api/travel` — create or resume a travel planning thread. JSON: `{ "message": "<user prompt>", "thread_id": "optional-thread-id" }`
-- `POST /api/travel/approve` — approve or request revisions for a draft. JSON: `{ "thread_id": "<id>", "approved": true|false, "feedback": "optional" }`
-- `GET /health` — basic health check and features list
+Open the API documentation at:
 
-Configuration & environment
-- Secrets and API keys are not included in the repo. Use environment variables or a `.env` file for any required keys consumed by `langgraph`, `langchain`, or other adapters.
+```text
+http://127.0.0.1:8000/docs
+```
 
-Development notes
-- The project keeps synchronous convenience wrappers in `backend.py` while running an async FastAPI server — `nest_asyncio` is applied in `app.py` to allow the sync helpers to call async MCP helpers.
-- Tests are not included; to experiment, interact with the web UI or call the API endpoints directly.
+Adjust the module name and port to match your implementation.
 
-Contributing
-- Contributions are welcome. Please open issues or pull requests for bug fixes, documentation improvements, or new adapter examples.
+## 🐳 Run with Docker
 
-License
-- This repository follows the license in the `LICENSE` file.
+Build the image:
 
-Acknowledgements
-- Built as a demonstration of LangGraph + MCP patterns with supervisor and guardrail concepts.
+```bash
+docker build -t trippilot-ai .
+```
 
-Contact
-- For questions or suggestions, open an issue or contact the repository owner.
+Run the container:
+
+```bash
+docker run --env-file .env -p 8000:8000 trippilot-ai
+```
+
+Make sure your Dockerfile, application entry point, and exposed port match your project configuration. If your MCP servers run in separate containers, configure their network addresses appropriately.
+
+## 📁 Project Structure
+
+An example structure for the platform is shown below. Adapt it to match your actual repository.
+
+```text
+TripPilot-AI/
+├── agents/
+│   ├── supervisor.py
+│   ├── travel_agent.py
+│   ├── flight_agent.py
+│   ├── budget_agent.py
+│   └── weather_agent.py
+├── guardrails/
+│   └── ...
+├── mcp_servers/
+│   └── ...
+├── graph/
+│   └── ...
+├── main.py
+├── requirements.txt
+├── Dockerfile
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+## 🔐 Security and Reliability
+
+- Keep API credentials in environment variables.
+- Validate inputs before invoking tools.
+- Configure timeouts and error handling for external API calls.
+- Restrict tool permissions to the operations each agent needs.
+- Handle unavailable MCP servers and failed LLM requests gracefully.
+- Test routing, tool execution, and guardrail behavior.
+- Avoid presenting estimated prices or unverified flight information as confirmed results.
+
+## 🔮 Future Enhancements
+
+Potential improvements include:
+
+- Persistent conversations and user travel preferences.
+- Human approval for important actions such as bookings.
+- Parallel execution of independent agents.
+- Retry policies and fallback models.
+- Automated tests for routing and guardrails.
+- Deployment monitoring and performance evaluation.
+- Integration with verified booking services.
+
+## 🎯 Project Goal
+
+TripPilot AI explores how agentic AI can simplify travel planning by combining specialized agents, tool interoperability, workflow orchestration, and observability in a single platform.
+
