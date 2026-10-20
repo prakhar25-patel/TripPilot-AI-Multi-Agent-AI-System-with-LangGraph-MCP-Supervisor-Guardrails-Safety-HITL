@@ -12,6 +12,10 @@
   <img src="https://img.shields.io/badge/Render-Cloud-46E3B7?style=for-the-badge&logo=render&logoColor=black" />
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
 </p>
+<p align="center">
+  <b>🌐 Live Application:</b>
+  <a href="https://trippilot-ai-multi-agent-ai-system-with.onrender.com/">Try TripPilot AI</a>
+</p>
 
 **TripPilot AI** is a multi-agent travel planning platform that transforms natural-language travel requests into personalized travel plans using intelligent agent orchestration, external tools, and persistent memory.
 
